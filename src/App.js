@@ -4,9 +4,10 @@ import Chat from "./Chat";
 import Sidebar from "./Sidebar";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Login from "./Login";
+import { useStatevalue } from "./StateProvider";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [{ user }, dispatch] = useStatevalue();
 
   return (
     <div className="app">
