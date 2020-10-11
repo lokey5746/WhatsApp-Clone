@@ -6,8 +6,11 @@ import EmotionIcon from "@material-ui/icons/InsertEmoticon";
 import MicIcon from "@material-ui/icons/Mic";
 import { useParams } from "react-router-dom";
 import db from "./firebase";
+import { useStatevalue } from "./StateProvider";
+import firebase from "firebase";
 
 function Chat() {
+  const [{ user }, dispatch] = useStatevalue();
   const [input, setInput] = useState("");
   const [seed, setSeed] = useState("");
   const { roomId } = useParams();
@@ -38,6 +41,11 @@ function Chat() {
 
   const sendMessage = (e) => {
     e.preventDefault();
+    db.collection("rooms").doc(roomId).collection("messages").add({
+      message: input,
+      name: user.displayName,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
     setInput("");
   };
 
@@ -63,7 +71,11 @@ function Chat() {
       </div>
       <div className="chat__body">
         {messages.map((message) => (
-          <p className={`chat__message ${true && "chat__reciver"}`}>
+          <p
+            className={`chat__message ${
+              message.name === user.displayName && "chat__reciver"
+            }`}
+          >
             <span className="chat__name">{message.name}</span>
             {message.message}
             <span className="chat__timestamp">
